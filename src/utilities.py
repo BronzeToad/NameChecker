@@ -1,15 +1,9 @@
 import configparser
 import json
 import os
-from enum import Enum
+
 from typing import Dict, List, Optional, Union
-
-
-# =========================================================================== #
-
-class ConfigType(Enum):
-    MAIN = 'config.ini'
-    SECRETS = 'secrets.ini'
+from src.enum_factory import ConfigType
 
 
 # =========================================================================== #
@@ -24,6 +18,9 @@ def get_config_val(
     ConfigParser = configparser.ConfigParser()
     ConfigParser.read(config_path)
     val = ConfigParser.get(section, key)
+
+    if val == '':
+        return None
 
     try:
         return int(val)
