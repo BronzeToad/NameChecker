@@ -3,36 +3,11 @@ import json
 import os
 
 from typing import Dict, List, Optional, Union
-from src.enum_factory import ConfigType
+from src.enum_factory import ConfigType, EnvType
 
 
 # =========================================================================== #
 
-def get_config_val(
-    section: str,
-    key: str,
-    config_type: Optional[ConfigType] = ConfigType.MAIN,
-) -> Union[str, int, float]:
-    """Retrieve and convert a value from .ini config file."""
-    config_path = os.path.join('..', 'cfg', config_type.value)
-    ConfigParser = configparser.ConfigParser()
-    ConfigParser.read(config_path)
-    val = ConfigParser.get(section, key)
-
-    if val == '':
-        return None
-
-    try:
-        return int(val)
-    except ValueError:
-        pass
-
-    try:
-        return float(val)
-    except ValueError:
-        pass
-
-    return val
 
 
 def load_json(file_path: str) -> List[Dict]:
@@ -51,18 +26,31 @@ def force_list(string_or_list: Union[str, List[str]]):
         return string_or_list
 
 
-def create_batches(
-    items: List[str],
-    batch_size: int
-) -> List[List[str]]:
-    """Split a list into smaller batches."""
-    batches = []
-    for i in range(0, len(items), batch_size):
-        batches.append(items[i:i + batch_size])
-    return batches
+def get_results_filepath(env_type: EnvType) -> str:
+    output_dir = get_config_val('Directories', 'OUTPUT')
+
+    if env_type == EnvType.PRD:
+        return os.path.join(output_dir, 'results.json')
+    else:
+        return os.path.join(output_dir, 'test_results.json')
 
 
+def get_batch_size() -> int:
+    return get_config_val('Main', 'BATCH_SIZE')
+
+
+def get_max_retries() -> int:
+    return Utils.get_config_val('Main', 'MAX_RETRIES')
+
+
+def get_name_seeds(seed_position: SeedPosition) -> List[str]:
+    config_path = Utils.get_config_val('Directories', 'SEEDS')
+    seeds = Utils.load_json(config_path)
+    for seed in seeds:
+        if seed['seedPosition'] == seed_position.value:
+            return seed['seedItems']
 # =========================================================================== #
 
 if __name__ == '__main__':
     pass
+

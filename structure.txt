@@ -1,5 +1,7 @@
 NameChecker/
 |-- cfg/
+|   |-- __init__.py
+|   |-- config_helper.py
 |   |-- config.ini
 |   |-- secrets.ini
 |   |-- seeds.json

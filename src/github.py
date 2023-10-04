@@ -5,11 +5,11 @@ import requests
 import src.utilities as Utils
 from src.utilities import ConfigType
 from src.enum_factory import EnvType
-from src.name_checker import NameChecker
+from src.parent_checker import ParentChecker
 
 # =========================================================================== #
 
-class GitHubChecker(NameChecker):
+class GitHubChecker(ParentChecker):
 
     def __init__(
         self,

@@ -5,13 +5,13 @@ import requests
 
 import src.utilities as Utils
 from src.enum_factory import EnvType
-from src.name_checker import NameChecker
+from src.parent_checker import ParentChecker
 from src.utilities import ConfigType
 
 
 # =========================================================================== #
 
-class DomainChecker(NameChecker):
+class DomainChecker(ParentChecker):
 
     def __init__(
         self,
