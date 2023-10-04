@@ -1,22 +1,9 @@
 import json
 import os
-from enum import Enum
 from typing import Dict, List, Optional, Union
 
 import src.utilities as Utils
-
-
-# =========================================================================== #
-
-class EnvType(Enum):
-    DEV = 'Development'
-    TST = 'Test'
-    PRD = 'Production'
-
-
-class SeedPosition(Enum):
-    START = 'start'
-    END = 'end'
+from src.enum_factory import EnvType, SeedPosition
 
 
 # =========================================================================== #
@@ -28,17 +15,20 @@ class NameChecker:
         env_type: EnvType,
         names: Optional[List[str]] = None,
         batch_size: Optional[int] = None,
-        max_retries: Optional[int] = None
+        max_retries: Optional[int] = None,
+        limit: Optional[int] = None
     ):
         self.env_type = env_type
         self.names = names
         self.batch_size = batch_size
         self.max_retries = max_retries
+        self.limit = limit
         self.__post_init__()
 
 
     def __post_init__(self):
         self.names = Utils.force_list(self.names) or self.get_names()
+        self.names = self.apply_limit()
         self.batch_size = self.batch_size or self.get_batch_size()
         self.max_retries = self.max_retries or self.get_max_retries()
         self.results_filepath = self.get_results_filepath()
@@ -63,6 +53,13 @@ class NameChecker:
                 return seed['seedItems']
 
 
+    def apply_limit(self):
+        if self.limit is not None:
+            return self.names[:self.limit]
+        else:
+            return self.names
+
+
     def get_names(self) -> List[str]:
         names = []
         for start in self.get_name_seeds(SeedPosition.START):
@@ -73,12 +70,12 @@ class NameChecker:
 
 
     def get_results_filepath(self) -> str:
-        root = Utils.get_config_val('Directories', 'ROOT')
+        output_dir = Utils.get_config_val('Directories', 'OUTPUT')
 
         if self.env_type == EnvType.PRD:
-            return os.path.join(root, 'output', 'results.json')
+            return os.path.join(output_dir, 'results.json')
         else:
-            return os.path.join(root, 'output', 'test_results.json')
+            return os.path.join(output_dir, 'test_results.json')
 
 
     def save_results(self, results: List[Dict[str, Union[str, bool]]]):
