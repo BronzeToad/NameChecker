@@ -1,0 +1,19 @@
+NameChecker/
+|-- cfg/
+|   |-- config.ini
+|   |-- secrets.ini
+|   |-- seeds.json
+|-- output/
+|   |-- results.json
+|   |-- test_results.json
+|-- src/
+|   |-- __init__.py
+|   |-- enum_factory.py
+|   |-- godaddy.py
+|   |-- name_checker.py
+|   |-- utilities.py
+|-- tests/
+|   |-- __init__.py
+|-- .gitignore
+|-- LICENSE
+|-- README.md
