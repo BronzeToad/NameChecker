@@ -1,19 +1,11 @@
 import json
 import os
-from enum import Enum
+
 from typing import Dict, List, Optional, Union
 
-from cfg.config_helper import ConfigHelper
+from cfg.config_helper import ConfigHelper, EnvType
 from src.domain_checker import DomainChecker
 from src.github_checker import GitHubChecker
-
-
-# =============================================================================================== #
-
-class EnvType(Enum):
-    DEV = 'Development'
-    TST = 'Test'
-    PRD = 'Production'
 
 
 # =============================================================================================== #
@@ -29,7 +21,7 @@ class NameChecker:
         batch_limit: Optional[int] = None,
         domain_max_retries: Optional[int] = None,
         domain_endings: Optional[List[str]] = None
-    ):
+    ) -> None:
         self.env_type = env_type
         self.names = names
         self.batch_size = batch_size
@@ -40,7 +32,8 @@ class NameChecker:
         self.__post_init__()
 
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
+        """Post initialization to set class properties."""
         self.cfg = ConfigHelper(self.env_type)
         self.seeds = self.get_seeds()
         self.names = self.force_list(self.names) or self.get_names()
@@ -62,22 +55,25 @@ class NameChecker:
 
 
     def get_seeds(self) -> List[Dict]:
+        """Get the list of seeds from the seeds file."""
         filepath = os.path.join(self.cfg.config_dir, self.cfg.seeds_filename)
         with open(filepath, 'r') as f:
             return json.load(f)
 
 
-    def get_seed_items(self, seed_position: int):
+    def get_seed_items(self, seed_position: int) -> List[str]:
+        """Get the list of seed items for a given seed position."""
         for seed in self.seeds:
             if seed['seedPosition'] == seed_position:
                 return seed['seedItems']
 
 
     def get_names(self) -> List[str]:
+        """Generate the list of names to check."""
         seed_positions = sorted([seed['seedPosition'] for seed in self.seeds])
 
         def _combine_items(pos_index: int) -> List[str]:
-            # Base case: If we're at the last position, just return its items
+            """Recursively combine seed items to generate names."""
             if pos_index == len(seed_positions) - 1:
                 return self.get_seed_items(seed_positions[pos_index])
             current_items = self.get_seed_items(seed_positions[pos_index])
@@ -89,6 +85,7 @@ class NameChecker:
 
 
     def create_batches(self) -> List[List[str]]:
+        """Create batches of names to check."""
         batches = []
         for i in range(0, len(self.names), self.batch_size):
             batches.append(self.names[i:i + self.batch_size])
@@ -99,7 +96,10 @@ class NameChecker:
             return batches
 
 
-    def process_batch(self, batch: List[str]):
+    def process_batch(self, batch: List[str]) -> List[Dict[str, bool]]:
+        """Process a batch of names."""
+        # TODO: add print statements for batch processing
+
         domain_checker = DomainChecker(
             host_names=batch,
             config_helper=self.cfg,
@@ -143,117 +143,41 @@ class NameChecker:
     #         print(f"Total: {total_available} of "
     #               f"{total_processed} available ({total_percent:.1f}%).")
 
-    #
-    # def check(self) -> None:
-    #     total_available = 0
-    #     total_processed = 0
-    #
-    #     for i, batch in enumerate(self.batches):
-    #         print(f"\nProcessing batch {i + 1} of {len(self.batches)}...")
-    #         print(f"Batch items: {batch}")
-    #         results = self.check_batch(batch)
-    #
-    #         batch_available = 0
-    #         for item in results:
-    #             if item['GitHub'] is True:
-    #                 batch_available += 1
-    #
-    #         total_available += batch_available
-    #         total_processed += len(batch)
-    #
-    #         self.save_results(results)
-    #
-    #         batch_percent = 100 * batch_available // len(batch)
-    #         total_percent = 100.0 * total_available / total_processed
-    #
-    #         print(f"Batch: {batch_available} of "
-    #               f"{len(batch)} available ({batch_percent}%).")
-    #         print(f"Total: {total_available} of "
-    #               f"{total_processed} available ({total_percent:.1f}%).")
 
-    def aggregate_results(self, *results):
-        aggregated = []
-
-        for result in results:
-            pass
-
-        return aggregated
+    def aggregate_results(self, *results) -> List[Dict[str, bool]]:
+        """Aggregate the results from multiple checkers."""
+        # TODO: this is a stub
+        pass
 
 
-    #
-    # def save_results(self, results: List[Dict[str, Union[str, bool]]]):
-    #     try:
-    #         with open(self.results_filepath, 'r') as f:
-    #             existing_data = json.load(f)
-    #     except FileNotFoundError:
-    #         existing_data = []
-    #
-    #     for item in results:
-    #         for existing_item in existing_data:
-    #             if item['name'] == existing_item['name']:
-    #                 existing_item.update(item)
-    #                 break
-    #         else:
-    #             existing_data.append(item)
-    #
-    #     with open(self.results_filepath, 'w') as f:
-    #         json.dump(existing_data, f, indent=4)
+    def save_results(self, results: List[Dict[str, bool]]) -> None:
+        """Save the results to the results file."""
+        # FIXME: this doesn't feel like it will work properly
 
-    def run(self):
+        filepath = os.path.join(self.cfg.output_dir, self.cfg.results_filename)
+        try:
+            with open(filepath, 'r') as f:
+                existing_data = json.load(f)
+        except FileNotFoundError:
+            existing_data = []
+
+        for item in results:
+            for existing_item in existing_data:
+                if item['name'] == existing_item['name']:
+                    existing_item.update(item)
+                    break
+            else:
+                existing_data.append(item)
+
+        with open(filepath, 'w') as f:
+            json.dump(existing_data, f, indent=4)
+
+
+
+    def run(self) -> None:
         all_results = []
         for batch in self.batches:
             batch_results = self.process_batch(batch)
             all_results.extend(batch_results)
-            # save batch results
-        # save all results
-
-# =========================================================================== #
-
-if __name__ == '__main__':
-
-    seeds = [
-        {
-            'seedPosition': 0,
-            'seedItems': ['Alpha', 'Bravo', 'Charlie']
-        },
-        {
-            'seedPosition': 1,
-            'seedItems': ['Delta', 'Echo', 'Foxtrot']
-        },
-        {
-            'seedPosition': 2,
-            'seedItems': ['Golf', 'Hotel', 'India']
-        }
-    ]
-
-    def get_seed_items(seeds, seed_position: int):
-        for seed in seeds:
-            if seed['seedPosition'] == seed_position:
-                return seed['seedItems']
-
-    def get_names(seeds) -> List[str]:
-        seed_positions = sorted([seed['seedPosition'] for seed in seeds])
-
-
-        def _combine_items(pos_index: int) -> List[str]:
-            if pos_index == len(seed_positions) - 1:
-                return get_seed_items(seeds, seed_positions[pos_index])
-
-            current_items = get_seed_items(seeds, seed_positions[pos_index])
-            next_items = _combine_items(pos_index + 1)
-
-            combined = [c_item + n_item for c_item in current_items for n_item in next_items]
-            return combined
-
-
-        return _combine_items(0)
-
-
-    seeds_one = seeds[:1]
-    print(len(get_names(seeds_one)))
-
-    seeds_two = seeds[:2]
-    print(len(get_names(seeds_two)))
-
-    seeds_three = seeds[:3]
-    print(len(get_names(seeds_three)))
+            # TODO: save batch results
+        # TODO: save all results
