@@ -13,7 +13,6 @@ NameChecker/
 |   |-- domain_checker.py
 |   |-- github_checker.py
 |   |-- name_checker.py
-|   |-- utilities.py
 |-- tests/
 |   |-- __init__.py
 |-- .gitignore
