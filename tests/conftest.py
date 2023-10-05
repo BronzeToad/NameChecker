@@ -51,9 +51,16 @@ def mock_config_parser():
     with patch("configparser.ConfigParser.read"), \
          patch("configparser.ConfigParser.__getitem__") as mock_getitem, \
          patch("configparser.ConfigParser.get") as mock_get:
+        # Ensure that the get method returns the correct values
+        def side_effect_get(section, key):
+            return MOCK_CONFIG.get(section, {}).get(key) or MOCK_SECRETS.get(section, {}).get(key)
+
+
+        mock_get.side_effect = side_effect_get
         mock_getitem.side_effect = lambda section: MOCK_CONFIG.get(section, {})
-        mock_get.side_effect = lambda section, key: MOCK_SECRETS.get(section, {}).get(key)
+
         yield
+
 
 @pytest.fixture(params=list(EnvType))
 def env_type(request):
