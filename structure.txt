@@ -10,9 +10,8 @@ NameChecker/
 |   |-- test_results.json
 |-- src/
 |   |-- __init__.py
-|   |-- domain.py
-|   |-- enum_factory.py
-|   |-- github.py
+|   |-- domain_checker.py
+|   |-- github_checker.py
 |   |-- name_checker.py
 |   |-- utilities.py
 |-- tests/
