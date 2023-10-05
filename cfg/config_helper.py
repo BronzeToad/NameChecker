@@ -107,9 +107,9 @@ class ConfigHelper:
             if self.env_type == EnvType.TST:
                 warn('No config values found for test environment. '
                      'Using values for development environment...')
-                self.godaddy_api_url = self.get_config_val('GoDaddy', 'DEV_API_URL')
-                self.godaddy_api_key = self.get_secret_val('GoDaddy', 'DEV_API_KEY')
-                self.godaddy_api_secret = self.get_secret_val('GoDaddy', 'DEV_API_SECRET')
+            self.godaddy_api_url = self.get_config_val('GoDaddy', 'DEV_API_URL')
+            self.godaddy_api_key = self.get_secret_val('GoDaddy', 'DEV_API_KEY')
+            self.godaddy_api_secret = self.get_secret_val('GoDaddy', 'DEV_API_SECRET')
 
     def set_github_config_vals(self):
         self.github_api_url = self.get_config_val('GitHub', 'BASE_API_URL')

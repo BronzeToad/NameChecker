@@ -11,9 +11,9 @@ MOCK_CONFIG = {
         'BATCH_RETRIES': '3'
     },
     'Directory': {
-        'ROOT': '/Users/ajp/Documents/Projects/NameChecker',
-        'CONFIG': '/Users/ajp/Documents/Projects/NameChecker/cfg',
-        'OUTPUT': '/Users/ajp/Documents/Projects/NameChecker/output'
+        'ROOT': '/Users/Spock/Documents/Projects/NameChecker',
+        'CONFIG': '/Users/Spock/Documents/Projects/NameChecker/cfg',
+        'OUTPUT': '/Users/Spock/Documents/Projects/NameChecker/output'
     },
     'Filename': {
         'SEEDS': 'seeds.json',
