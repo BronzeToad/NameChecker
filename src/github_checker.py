@@ -1,4 +1,4 @@
-from typing import List
+from typing import Dict, List
 
 import requests
 
@@ -9,12 +9,13 @@ from cfg.config_helper import ConfigHelper
 
 class GitHubChecker:
 
-    def __init__(self, usernames: List[str], config_helper: ConfigHelper):
+    def __init__(self, usernames: List[str], config_helper: ConfigHelper) -> None:
         self.usernames = usernames
         self.cfg = config_helper
 
 
     def check_username(self, username: str) -> bool:
+        """Check the availability of a single username."""
         endpoint = f"{self.cfg.github_api_url}{username}"
         headers = {'Authorization': f"token {self.cfg.github_token}"}
 
@@ -34,7 +35,8 @@ class GitHubChecker:
             return False
 
 
-    def check(self):
+    def check(self) -> List[Dict[str, bool]]:
+        """Check the availability of all usernames and return the results."""
         results = []
 
         for username in self.usernames:
@@ -42,9 +44,3 @@ class GitHubChecker:
             results.append({'name': username, 'GitHub': is_available})
 
         return results
-
-
-# =============================================================================================== #
-
-if __name__ == '__main__':
-    pass
