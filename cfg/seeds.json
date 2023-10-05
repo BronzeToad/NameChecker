@@ -1,6 +1,6 @@
 [
   {
-    "seedPosition": "start",
+    "seedPosition": 0,
     "seedItems" : [
       "Red", "Blue", "Gold", "Pink", "Gray", "Tan", "Lime", "Teal", "Navy", "Cyan", "Ruby", "Olive", "Jade", "Coral",
       "Amber", "Rose", "Taupe", "Plum", "Peach", "Bronze", "Mint", "Slate", "Cream", "Azure", "Umber", "Onyx", "Topaz",
@@ -40,7 +40,7 @@
     ]
   },
   {
-    "seedPosition": "end",
+    "seedPosition": 1,
     "seedItems": [
       "Orc", "Elf", "Lich", "Gnoll", "Beholder", "Druid", "Minotaur", "Goblin", "Troll", "Wight", "Mimic", "Rogue",
       "Dwarf", "Kobold", "Dragon", "Ogre", "Harpy", "Bard", "Warlock", "Sorcerer", "Giant", "Ghoul", "Bugbear",
