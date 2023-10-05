@@ -1,9 +1,17 @@
 import configparser
 import os
+from dataclasses import dataclass, field
+from enum import Enum
 from typing import Union
 from warnings import warn
-from dataclasses import dataclass, field
-from src.enum_factory import EnvType
+
+
+# =============================================================================================== #
+
+class EnvType(Enum):
+    DEV = 'Development'
+    TST = 'Test'
+    PRD = 'Production'
 
 
 # =============================================================================================== #
@@ -106,25 +114,3 @@ class ConfigHelper:
     def set_github_config_vals(self):
         self.github_api_url = self.get_config_val('GitHub', 'BASE_API_URL')
         self.github_token = self.get_secret_val('GitHub', 'TOKEN')
-
-
-# =============================================================================================== #
-
-if __name__ == '__main__':
-    from icecream import ic
-
-    cfg = ConfigHelper(EnvType.PRD)
-
-    ic(cfg.batch_size)
-    ic(cfg.batch_retries)
-    ic(cfg.root_dir)
-    ic(cfg.config_dir)
-    ic(cfg.output_dir)
-    ic(cfg.seeds_filename)
-    ic(cfg.results_filename)
-    ic(cfg.godaddy_api_url)
-    ic(cfg.godaddy_max_retries)
-    ic(cfg.godaddy_api_key)
-    ic(cfg.godaddy_api_secret)
-    ic(cfg.github_api_url)
-    ic(cfg.github_token)
