@@ -1,10 +1,7 @@
 import configparser
 import os
-from dataclasses import dataclass, field
 from enum import Enum
 from typing import Union
-from warnings import warn
-
 
 # =============================================================================================== #
 
@@ -13,104 +10,146 @@ class EnvType(Enum):
     TST = 'Test'
     PRD = 'Production'
 
+CONFIG_FILES = ['config.ini', 'secrets.ini']
 
-# =============================================================================================== #
 
-@dataclass
 class ConfigHelper:
-    env_type: EnvType
-    config: configparser.ConfigParser = field(init=False, repr=False)
-    secrets: configparser.ConfigParser = field(init=False, repr=False)
-    batch_size: int = field(init=False, repr=False)
-    batch_retries: int = field(init=False, repr=False)
-    root_dir: str = field(init=False, repr=False)
-    config_dir: str = field(init=False, repr=False)
-    output_dir: str = field(init=False, repr=False)
-    seeds_filename: str = field(init=False, repr=False)
-    results_filename: str = field(init=False, repr=False)
-    godaddy_api_url: str = field(init=False, repr=False)
-    godaddy_max_retries: int = field(init=False, repr=False)
-    godaddy_api_key: str = field(init=False, repr=False)
-    godaddy_api_secret: str = field(init=False, repr=False)
-    github_api_url: str = field(init=False, repr=False)
-    github_token: str = field(init=False, repr=False)
+    def __init__(self, env_type: Union[EnvType, str]) -> None:
+        print("Initializing ConfigHelper...")
+        self.env_type = EnvType(env_type)
+        self.__post_init__()
+        self._batch_size = None
+        self._batch_retries = None
+        self._root_dir = None
+        self._config_dir = None
+        self._output_dir = None
+        self._seeds_filename = None
+        self._results_filename = None
+        self._godaddy_max_retries = None
+        self._godaddy_api_url = None
+        self._godaddy_api_key = None
+        self._godaddy_api_secret = None
+        self._github_api_url = None
+        self._github_token = None
 
 
-    def __post_init__(self):
-        self.set_config_parsers()
-        self.set_batch_config_vals()
-        self.set_dir_config_vals()
-        self.set_filename_config_vals()
-        self.set_godaddy_config_vals()
-        self.set_github_config_vals()
-
-
-    def set_config_parsers(self):
-        current_dir = os.path.dirname(os.path.abspath(__file__))
-        config_path = os.path.join(current_dir, 'config.ini')
-        secrets_path = os.path.join(current_dir, 'secrets.ini')
-
+    def __post_init__(self) -> None:
+        print("Executing post init...")
         self.config = configparser.ConfigParser()
-        self.config.read(config_path)
-
-        self.secrets = configparser.ConfigParser()
-        self.secrets.read(secrets_path)
+        self.load_config_files()
 
 
-    def get_config_val(self, section: str, key: str):
-        return self.clean_returned_val(self.config.get(section, key))
+    def load_config_files(self) -> None:
+        print("Loading config files...")
+        config_dir = os.path.dirname(os.path.abspath(__file__))
+        for config_file in CONFIG_FILES:
+            config_filepath = os.path.join(config_dir, config_file)
+            self.config.read(config_filepath)
 
-    def get_secret_val(self, section: str, key: str):
-        return self.clean_returned_val(self.secrets.get(section, key))
-
-    @staticmethod
-    def clean_returned_val(val: str) -> Union[str, int, float]:
-        if val == '':
-            return None
-
-        try:
-            return int(val)
-        except ValueError:
-            pass
-
-        try:
-            return float(val)
-        except ValueError:
-            pass
-
-        return val
+    
+    def get_config_val(self, section: str, key: str) -> str:
+        return self.config.get(section, key)
 
 
-    def set_batch_config_vals(self):
-        self.batch_size = self.get_config_val('Batch', 'BATCH_SIZE')
-        self.batch_retries = self.get_config_val('Batch', 'BATCH_RETRIES')
+    @property
+    def batch_size(self) -> int:
+        print("Accessing batch_size property...")
+        if self._batch_size is None:
+            self._batch_size = self.config.getint('Batch', 'BATCH_SIZE')
+        return self._batch_size
+    
+    @batch_size.setter
+    def batch_size(self, value: int) -> None:
+        self._batch_size = value
 
-    def set_dir_config_vals(self):
-        self.root_dir = self.get_config_val('Directory', 'ROOT')
-        self.config_dir = self.get_config_val('Directory', 'CONFIG')
-        self.output_dir = self.get_config_val('Directory', 'OUTPUT')
+    @property
+    def batch_retries(self) -> int:
+        if self._batch_retries is None:
+            self._batch_retries = self.config.getint('Batch', 'BATCH_RETRIES')
+        return self._batch_retries
+    
+    @batch_retries.setter
+    def batch_retries(self, value: int) -> None:
+        self._batch_retries = value
 
-    def set_filename_config_vals(self):
-        self.seeds_filename = self.get_config_val('Filename', 'SEEDS')
-        if self.env_type == EnvType.PRD:
-            self.results_filename = self.get_config_val('Filename', 'RESULTS')
-        else:
-            self.results_filename = self.get_config_val('Filename', 'TST_RESULTS')
+    @property
+    def root_dir(self) -> str:
+        if self._root_dir is None:
+            self._root_dir = self.config.get('Directory', 'ROOT')
+        return self._root_dir
+    
+    @property
+    def config_dir(self) -> str:
+        if self._config_dir is None:
+            self._config_dir = self.config.get('Directory', 'CONFIG')
+        return self._config_dir
+    
+    @property
+    def output_dir(self) -> str:
+        if self._output_dir is None:
+            self._output_dir = self.config.get('Directory', 'OUTPUT')
+        return self._output_dir
 
-    def set_godaddy_config_vals(self):
-        self.godaddy_max_retries = self.get_config_val('GoDaddy', 'MAX_RETRIES')
-        if self.env_type == EnvType.PRD:
-            self.godaddy_api_url = self.get_config_val('GoDaddy', 'PRD_API_URL')
-            self.godaddy_api_key = self.get_secret_val('GoDaddy', 'PRD_API_KEY')
-            self.godaddy_api_secret = self.get_secret_val('GoDaddy', 'PRD_API_SECRET')
-        else:
-            if self.env_type == EnvType.TST:
-                warn('No config values found for test environment. '
-                     'Using values for development environment...')
-            self.godaddy_api_url = self.get_config_val('GoDaddy', 'DEV_API_URL')
-            self.godaddy_api_key = self.get_secret_val('GoDaddy', 'DEV_API_KEY')
-            self.godaddy_api_secret = self.get_secret_val('GoDaddy', 'DEV_API_SECRET')
+    @property
+    def seeds_filename(self) -> str:
+        if self._seeds_filename is None:
+            self._seeds_filename = self.config.get('Filename', 'SEEDS')
+        return self._seeds_filename
+    
+    @property
+    def results_filename(self) -> str:
+        if self._results_filename is None:
+            if self.env_type == EnvType.PRD:
+                self._results_filename = self.config.get('Filename', 'RESULTS')
+            else:
+                self._results_filename = self.config.get('Filename', 'TST_RESULTS')
+        return self._results_filename
 
-    def set_github_config_vals(self):
-        self.github_api_url = self.get_config_val('GitHub', 'BASE_API_URL')
-        self.github_token = self.get_secret_val('GitHub', 'TOKEN')
+    @property
+    def godaddy_max_retries(self) -> int:
+        if self._godaddy_max_retries is None:
+            self._godaddy_max_retries = self.config.getint('GoDaddy', 'MAX_RETRIES')
+        return self._godaddy_max_retries
+    
+    @godaddy_max_retries.setter
+    def godaddy_max_retries(self, value: int) -> None:
+        self._godaddy_max_retries = value
+
+    @property
+    def godaddy_api_url(self) -> str:
+        if self._godaddy_api_url is None:
+            if self.env_type == EnvType.PRD:
+                self._godaddy_api_url = self.config.get('GoDaddy', 'PRD_API_URL')
+            else:
+                self._godaddy_api_url = self.config.get('GoDaddy', 'DEV_API_URL')
+        return self._godaddy_api_url
+    
+    @property
+    def github_api_url(self) -> str:
+        if self._github_api_url is None:
+            self._github_api_url = self.config.get('GitHub', 'BASE_API_URL')
+        return self._github_api_url
+    
+    @property
+    def godaddy_api_key(self) -> str:
+        if self._godaddy_api_key is None:
+            if self.env_type == EnvType.PRD:
+                self._godaddy_api_key = self.config.get('GoDaddy', 'PRD_API_KEY')
+            else:
+                self._godaddy_api_key = self.config.get('GoDaddy', 'DEV_API_KEY')
+        return self._godaddy_api_key
+    
+    @property
+    def godaddy_api_secret(self) -> str:
+        if self._godaddy_api_secret is None:
+            if self.env_type == EnvType.PRD:
+                self._godaddy_api_secret = self.config.get('GoDaddy', 'PRD_API_SECRET')
+            else:
+                self._godaddy_api_secret = self.config.get('GoDaddy', 'DEV_API_SECRET')
+        return self._godaddy_api_secret
+    
+    @property
+    def github_token(self) -> str:
+        if self._github_token is None:
+            self._github_token = self.config.get('GitHub', 'GITHUB_TOKEN')
+        return self._github_token
