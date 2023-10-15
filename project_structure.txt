@@ -25,6 +25,3 @@
 |   |   |-- secrets.ini
 |   |-- config_helper_test.py
 |   |-- conftest.py
-|   |-- domain_checker_test.py
-|   |-- github_checker_test.py
-|   |-- name_checker_test.py
