@@ -54,13 +54,13 @@ def get_git_project_structure(root_path, output_filename):
     
     print(f"Project structure written to: {output_filename}")
 
-def find_project_root(project_name: str):
+def find_project_root(project_name: str) -> Path:
     cwd = Path.cwd()
-    print(cwd)
     while cwd.name.lower() != project_name.lower():
+        if cwd == cwd.parent:
+            raise NotADirectoryError(f"Could not find project root for project: {project_name}")
         cwd = cwd.parent
-        print()
-        print(cwd)
+    return cwd
     
 
 
@@ -69,4 +69,4 @@ if __name__ == "__main__":
     #     root_path='/Users/ajp/Documents/Projects/NameChecker', 
     #     output_filename='project_structure.txt')
 
-    find_project_root('NameChecker')
+    print(find_project_root('namechecker'))
