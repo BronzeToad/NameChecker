@@ -1,9 +1,5 @@
 import pytest
 
-from src.utils.config_helper import EnvType
-
-
-# =============================================================================================== #
 
 # testing config loads
 def test_load_batch_config(config_helper):
@@ -63,7 +59,7 @@ def test_seeds_filename_invalid(config_helper):
 
 # testing results_filename property
 def test_results_filename_default(config_helper):
-    if config_helper.env_type == EnvType.PRD:
+    if config_helper.env_type.name == 'PRD':
         assert config_helper.results_filename == 'results.json'
     else:
         assert config_helper.results_filename == 'test_results.json'
@@ -94,7 +90,7 @@ def test_godaddy_max_retries_invalid(config_helper):
 
 # testing godaddy_api_url property
 def test_godaddy_api_url_default(config_helper):
-    if config_helper.env_type == EnvType.PRD:
+    if config_helper.env_type.name == 'PRD':
         assert config_helper.godaddy_api_url == 'https://api.godaddy.com'
     else:
         assert config_helper.godaddy_api_url == 'https://api.ote-godaddy.com'
@@ -125,7 +121,7 @@ def test_github_api_url_invalid(config_helper):
 
 # testing godaddy_api_key property
 def test_godaddy_api_key_default(config_helper):
-    if config_helper.env_type == EnvType.PRD:
+    if config_helper.env_type.name == 'PRD':
         assert config_helper.godaddy_api_key == 'TEST_prd_api_key_456'
     else:
         assert config_helper.godaddy_api_key == 'TEST_dev_api_key_123'
@@ -142,7 +138,7 @@ def test_godaddy_api_key_invalid(config_helper):
 
 # testing godaddy_api_secret property
 def test_godaddy_api_secret_default(config_helper):
-    if config_helper.env_type == EnvType.PRD:
+    if config_helper.env_type.name == 'PRD':
         assert config_helper.godaddy_api_secret == 'TEST_prd_api_secret_456'
     else:
         assert config_helper.godaddy_api_secret == 'TEST_dev_api_secret_123'
