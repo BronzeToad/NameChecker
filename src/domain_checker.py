@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 
 import requests
 
-from cfg.config_helper import ConfigHelper
+from src.utils.config_helper import ConfigHelper
 
 
 # =============================================================================================== #
