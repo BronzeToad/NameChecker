@@ -1,22 +1,28 @@
 |-- .gitignore
 |-- cfg/
-|   |-- __init__.py
 |   |-- config.ini
-|   |-- config_helper.py
 |   |-- seeds.json
 |-- LICENSE
 |-- output/
 |   |-- results.json
 |   |-- test_results.json
+|-- project_structure.txt
 |-- README.md
 |-- src/
 |   |-- __init__.py
 |   |-- domain_checker.py
 |   |-- github_checker.py
 |   |-- name_checker.py
-|-- structure.txt
+|   |-- utils/
+|   |   |-- __init__.py
+|   |   |-- config_helper.py
+|   |   |-- toad_utils.py
+|   |   |-- validator.py
 |-- tests/
 |   |-- __init__.py
+|   |-- cfg/
+|   |   |-- config.ini
+|   |   |-- secrets.ini
 |   |-- config_helper_test.py
 |   |-- conftest.py
 |   |-- domain_checker_test.py

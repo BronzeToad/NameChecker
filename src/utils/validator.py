@@ -56,9 +56,9 @@ class Validator:
         """Validates that the provided value is an integer."""
         error_msg_base = f"Value {value} is invalid: number value"
         self._check_integer(error_msg_base, value)
-        if min_value and value < min_value:
+        if min_value is not None and value < min_value:
             raise self.error_type(f"{error_msg_base} must be {min_value} or greater.")
-        if max_value and value > max_value:
+        if max_value is not None and value > max_value:
             raise self.error_type(f"{error_msg_base} must be {max_value} or less.")
 
 
@@ -91,7 +91,7 @@ class Validator:
             invalid_chars = ['<', '>', ':', '"', '/', '\\', '|', '?', '*']
         error_msg_base = f"Filename {filename} is invalid: filename"
         self._check_string(error_msg_base, filename)
-        if invalid_chars and any(char in filename for char in invalid_chars):
+        if invalid_chars is not None and any(char in filename for char in invalid_chars):
             raise self.error_type(f"{error_msg_base} contains one or more invalid characters.")
         if check_path_seq and ".." in filename:
             raise self.error_type(f"{error_msg_base} contains a potentially unsafe path sequence.")
@@ -123,11 +123,11 @@ class Validator:
     ) -> None:
         error_msg_base = f"API token {token_value} is invalid: API token"
         self._check_string(error_msg_base, token_value)
-        if expected_length and len(token_value) != expected_length:
+        if expected_length is not None and len(token_value) != expected_length:
             raise self.error_type(f"{error_msg_base} must be {expected_length} characters.")
-        if expected_prefix and not token_value.startswith(expected_prefix):
+        if expected_prefix is not None and not token_value.startswith(expected_prefix):
             raise self.error_type(f"{error_msg_base} must start with {expected_prefix}.")
-        if expected_suffix and not token_value.endswith(expected_suffix):
+        if expected_suffix is not None and not token_value.endswith(expected_suffix):
             raise self.error_type(f"{error_msg_base} must end with {expected_suffix}.")
-        if invalid_chars and any(char in token_value for char in invalid_chars):
+        if invalid_chars is not None and any(char in token_value for char in invalid_chars):
             raise self.error_type(f"{error_msg_base} contains one or more invalid characters.")

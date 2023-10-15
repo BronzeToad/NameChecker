@@ -2,17 +2,9 @@ import subprocess
 import os
 from pathlib import Path
 
-def get_git_project_structure(root_path, output_filename):
-    """
-    Write the project structure from the root path to a txt file, 
-    only including files and directories tracked by Git (i.e., not .gitignored).
-    
-    Parameters:
-    - root_path (str): The root directory of the project.
-    - output_filename (str): The name of the output file.
-    """
-    
+def get_git_project_structure(project_name: str, output_filename):
     # Get the list of files tracked by Git
+    root_path = find_project_root(project_name)
     result = subprocess.run(['git', 'ls-files'], cwd=root_path, stdout=subprocess.PIPE)
     tracked_files = result.stdout.decode('utf-8').splitlines()
 
@@ -49,23 +41,21 @@ def get_git_project_structure(root_path, output_filename):
     
     print(f"Generating structure for Git-tracked files in project at path: {root_path}")
     # Write the structure to the specified output file
-    with open(output_filename, 'w') as file:
+    with open(root_path / output_filename, 'w') as file:
         file.write(structure_str)
     
     print(f"Project structure written to: {output_filename}")
 
-def find_project_root(project_name: str, tests: bool = False) -> Path:
+def find_project_root(project_name: str) -> Path:
     cwd = Path.cwd()
     while cwd.name.lower() != project_name.lower():
         if cwd == cwd.parent:
             raise NotADirectoryError(f"Could not find project root for project: {project_name}")
         cwd = cwd.parent
-    return cwd / 'tests' if tests else cwd
+    return cwd
 
 
 if __name__ == "__main__":
-    # get_git_project_structure(
-    #     root_path='/Users/ajp/Documents/Projects/NameChecker', 
-    #     output_filename='project_structure.txt')
+    get_git_project_structure('NameChecker', 'project_structure.txt')
 
-    print(find_project_root('namechecker', tests=True))
+    # print(find_project_root('namechecker', tests=True))

@@ -1,6 +1,6 @@
 import configparser
 from enum import Enum
-from typing import Union
+from typing import Optional, Union
 
 from src.utils.toad_utils import find_project_root
 from src.utils.validator import Validator, ValidatorType
@@ -16,8 +16,13 @@ class EnvType(Enum):
 
 
 class ConfigHelper:
-    def __init__(self, env_type: Union[EnvType, str]) -> None:
+    def __init__(
+        self,
+        env_type: Union[EnvType, str],
+        test_mode: Optional[bool] = False
+    ) -> None:
         self.env_type = EnvType(env_type)
+        self.test_mode = test_mode
         self._batch_size = None
         self._batch_retries = None
         self._seeds_filename = None
@@ -35,7 +40,8 @@ class ConfigHelper:
 
 
     def load_config_files(self) -> None:
-        config_dir = find_project_root('NameChecker') / 'cfg'
+        root_dir = find_project_root('NameChecker')
+        config_dir = root_dir / 'tests' / 'cfg' if self.test_mode else root_dir / 'cfg'
         [self.config.read(config_dir / config_file) for config_file in CONFIG_FILES]
 
     def initialize_properties(self) -> None:
@@ -122,7 +128,7 @@ class ConfigHelper:
     @property
     def github_api_url(self) -> str:
         return self._github_api_url
-    
+
     @github_api_url.setter
     def github_api_url(self, value: str) -> None:
         self.validator.url(value)
