@@ -2,7 +2,7 @@ import pytest
 
 import src.utils.toad_utils as ToadUtils
 from src.utils.config_helper import ConfigHelper, EnvType
-
+from src.utils.validator import ValidatorType, Validator
 
 # =============================================================================================== #
 
@@ -23,3 +23,6 @@ def toad_utils():
 def project_root(toad_utils):
     return toad_utils.find_project_root('NameChecker', test_mode=True)
 
+@pytest.fixture
+def validator():
+    return Validator(ValidatorType.CONFIG)

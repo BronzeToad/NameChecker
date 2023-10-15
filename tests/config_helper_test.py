@@ -1,6 +1,11 @@
 import pytest
 
 
+def test_config_helper_init(config_helper, env_type):
+    assert config_helper.env_type == env_type
+    assert config_helper.test_mode == True
+
+
 # testing config loads
 def test_load_batch_config(config_helper):
     assert 'Batch' in config_helper.config.sections()
@@ -167,8 +172,7 @@ def test_github_token_invalid(config_helper):
         config_helper.github_token = ''
 
 
-@pytest.mark.parametrize(
-    'section, key', [
+@pytest.mark.parametrize('section, key', [
         ('Batch', 'BATCH_SIZE'),
         ('Filename', 'SEEDS'),
         ('GoDaddy', 'DEV_API_URL'),
