@@ -3,7 +3,7 @@ import os
 
 from typing import Dict, List, Optional, Union
 
-from cfg.config_helper import ConfigHelper, EnvType
+from src.utils.config_helper import ConfigHelper, EnvType
 from src.domain_checker import DomainChecker
 from src.github_checker import GitHubChecker
 
