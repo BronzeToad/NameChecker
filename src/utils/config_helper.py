@@ -1,11 +1,10 @@
 import configparser
-import os
 from enum import Enum
-import re
 from typing import Union
-from src.utils.validator import Validator, ValidatorType
+
 from src.utils.toad_utils import find_project_root
-from pathlib import Path
+from src.utils.validator import Validator, ValidatorType
+
 # =============================================================================================== #
 
 CONFIG_FILES = ['config.ini', 'secrets.ini']
