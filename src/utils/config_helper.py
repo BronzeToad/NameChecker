@@ -40,8 +40,8 @@ class ConfigHelper:
 
 
     def load_config_files(self) -> None:
-        root_dir = find_project_root('NameChecker')
-        config_dir = root_dir / 'tests' / 'cfg' if self.test_mode else root_dir / 'cfg'
+        root_dir = find_project_root('NameChecker', self.test_mode)
+        config_dir = root_dir / 'cfg'
         [self.config.read(config_dir / config_file) for config_file in CONFIG_FILES]
 
     def initialize_properties(self) -> None:
@@ -172,36 +172,3 @@ class ConfigHelper:
     def github_token(self, value: str) -> None:
         self.validator.api_token(value, expected_prefix='github_pat_')
         self._github_token = value
-
-
-if __name__ == "__main__":
-
-    cfg = ConfigHelper(EnvType.PRD)
-    print("Agnostic Config...")
-    print("batch_size: ", cfg.batch_size)
-    print("batch_retries: ", cfg.batch_retries)
-    print("seeds_filename: ", cfg.seeds_filename)
-    print("godaddy_max_retries: ", cfg.godaddy_max_retries)
-    print("github_api_url: ", cfg.github_api_url)
-    print("github_token: ", cfg.github_token)
-
-    cfg = ConfigHelper(EnvType.PRD)
-    print("\nProduction Config...")
-    print("results_filename: ", cfg.results_filename)
-    print("godaddy_api_url: ", cfg.godaddy_api_url)
-    print("godaddy_api_key: ", cfg.godaddy_api_key)
-    print("godaddy_api_secret: ", cfg.godaddy_api_secret)
-
-    cfg = ConfigHelper(EnvType.TST)
-    print("\nTest Config...")
-    print("results_filename: ", cfg.results_filename)
-    print("godaddy_api_url: ", cfg.godaddy_api_url)
-    print("godaddy_api_key: ", cfg.godaddy_api_key)
-    print("godaddy_api_secret: ", cfg.godaddy_api_secret)
-
-    cfg = ConfigHelper(EnvType.DEV)
-    print("\nDevelopment Config...")
-    print("results_filename: ", cfg.results_filename)
-    print("godaddy_api_url: ", cfg.godaddy_api_url)
-    print("godaddy_api_key: ", cfg.godaddy_api_key)
-    print("godaddy_api_secret: ", cfg.godaddy_api_secret)
