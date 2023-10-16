@@ -1,6 +1,7 @@
 import pytest
 
 import src.utils.toad_utils as ToadUtils
+from src.domain_checker import DomainChecker
 from src.utils.config_helper import ConfigHelper, EnvType
 from src.utils.validator import ValidatorType, Validator
 
@@ -26,3 +27,13 @@ def project_root(toad_utils):
 @pytest.fixture
 def validator():
     return Validator(ValidatorType.CONFIG)
+
+@pytest.fixture
+def domain_checker(env_type):
+    return DomainChecker(
+        host_names=['TestName'],
+        env_type=env_type,
+        test_mode=True
+    )
+
+

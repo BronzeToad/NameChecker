@@ -123,7 +123,7 @@ def test_directory_value_not_dir(validator):
     (False, True, True),
     (False, True, False),
     (False, False, True),
-    (False, False, False),
+    (False, False, False)
     ])
 def test_directory_flags_valid(validator, project_root, check_absolute_path, check_exists, check_is_dir):
     assert validator.directory(
@@ -215,7 +215,7 @@ def test_url_flags_domain_false_no_domain(validator):
     (True, True),
     (True, False),
     (False, True),
-    (False, False),
+    (False, False)
     ])
 def test_url_flags_valid(validator, check_scheme, check_domain):
     assert validator.url(
